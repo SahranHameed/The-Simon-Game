@@ -23,8 +23,8 @@ $(document).keypress(function () {
 });
 
 // Also allow tap/click on mobile to start
-$(document).on("click", function () {
-  if (!started) {
+$(document).on("click", function (e) {
+  if (!started && !$(e.target).hasClass("simon-btn")) {
     startGame();
   }
 });
