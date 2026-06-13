@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎮 Simon Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+    <div class="container">
+      <h1 class="title">Simon Game</h1>
+      <p class="level-display">Press Any Key to Start</p>
+
+      <div class="game-board">
+        <div class="btn-row">
+          <div class="simon-btn green" id="green"></div>
+          <div class="simon-btn red" id="red"></div>
+        </div>
+        <div class="center-circle">
+          <p class="level-label">LEVEL</p>
+          <p class="level-num" id="level-num">0</p>
+        </div>
+        <div class="btn-row">
+          <div class="simon-btn yellow" id="yellow"></div>
+          <div class="simon-btn blue" id="blue"></div>
+        </div>
+      </div>
+
+      <p class="status-msg" id="status-msg">🎮 Boss Level Challenge 02</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
