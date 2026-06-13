@@ -1,128 +1,136 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  background-color: #011627;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  color: #fff;
+    background-color: #111;
+    text-align: center;
+    font-family: sans-serif;
+    color: white;
+    padding-top: 40px;
 }
 
-.container {
-  text-align: center;
-  padding: 2rem;
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    letter-spacing: 3px;
 }
 
-.title {
-  font-size: 3.5rem;
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: #fff;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
+#status {
+    color: #aaa;
+    margin-bottom: 16px;
+    font-size: 1rem;
 }
 
-.level-display {
-  font-size: 1.2rem;
-  color: #aaa;
-  margin-bottom: 2.5rem;
-  letter-spacing: 2px;
+#start-btn {
+    padding: 10px 28px;
+    font-size: 1rem;
+    background: #222;
+    color: white;
+    border: 2px solid #555;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 30px;
 }
 
-.game-board {
-  position: relative;
-  width: 360px;
-  height: 360px;
-  margin: 0 auto 2rem;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+#start-btn:hover {
+    background: #333;
 }
 
-.simon-btn {
-  border-radius: 12px;
-  cursor: pointer;
-  transition: filter 0.1s;
-  opacity: 0.6;
+/* ── Game board ── */
+.game-wrapper {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    margin: 0 auto;
 }
 
-.simon-btn:hover {
-  opacity: 0.8;
+.row {
+    display: flex;
+    justify-content: center;
 }
 
-.simon-btn.green  { background-color: #00b300; border-radius: 50% 12px 12px 12px; }
-.simon-btn.red    { background-color: #cc0000; border-radius: 12px 50% 12px 12px; }
-.simon-btn.yellow { background-color: #cccc00; border-radius: 12px 12px 12px 50%; }
-.simon-btn.blue   { background-color: #0000cc; border-radius: 12px 12px 50% 12px; }
-
-.simon-btn.active-green  { background-color: #00ff00; opacity: 1; box-shadow: 0 0 30px #00ff00; }
-.simon-btn.active-red    { background-color: #ff0000; opacity: 1; box-shadow: 0 0 30px #ff0000; }
-.simon-btn.active-yellow { background-color: #ffff00; opacity: 1; box-shadow: 0 0 30px #ffff00; }
-.simon-btn.active-blue   { background-color: #0000ff; opacity: 1; box-shadow: 0 0 30px #0000ff; }
-
-.simon-btn.pressed {
-  filter: brightness(1.8);
-  transform: scale(0.96);
+/* ── Each panel ── */
+.panel {
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.1s;
 }
 
-.center-circle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90px;
-  height: 90px;
-  background: #011627;
-  border: 3px solid #333;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
+.panel:hover {
+    box-shadow: inset 0 0 0 3px cyan;
+    opacity: 0.85;
+}
+
+/* Colors - each panel has its OWN rule, no duplicate overrides! */
+.top-left-panel {
+    background-color: #00aa00;   /* Green */
+    border-top-left-radius: 200px;
+}
+
+.top-right-panel {
+    background-color: #cc0000;   /* Red */
+    border-top-right-radius: 200px;
+}
+
+.bottom-left-panel {
+    background-color: #cccc00;   /* Yellow */
+    border-bottom-left-radius: 200px;
+}
+
+.bottom-right-panel {
+    background-color: #0000cc;   /* Blue */
+    border-bottom-right-radius: 200px;
+}
+
+/* Active (flash) state */
+.top-left-panel.active    { background-color: #00ff00; opacity: 1; box-shadow: 0 0 30px #00ff00; }
+.top-right-panel.active   { background-color: #ff0000; opacity: 1; box-shadow: 0 0 30px #ff0000; }
+.bottom-left-panel.active { background-color: #ffff00; opacity: 1; box-shadow: 0 0 30px #ffff00; }
+.bottom-right-panel.active{ background-color: #4444ff; opacity: 1; box-shadow: 0 0 30px #4444ff; }
+
+/* ── Center circle ── */
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    background-color: #111;
+    border: 3px solid #444;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .level-label {
-  font-size: 0.65rem;
-  color: #666;
-  letter-spacing: 2px;
+    font-size: 0.6rem;
+    color: #666;
+    letter-spacing: 2px;
 }
 
-.level-num {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #fff;
+#level-num {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
 }
 
-.status-msg {
-  font-size: 1rem;
-  color: #666;
-  letter-spacing: 1px;
-}
-
-.status-msg.game-over {
-  color: #ff4444;
-  font-size: 1.3rem;
-  font-weight: 600;
-}
-
-.status-msg.success {
-  color: #00cc44;
-}
-
-body.game-over-flash {
-  animation: flashRed 0.5s ease;
+/* Game over flash */
+body.game-over {
+    animation: flashRed 0.6s ease;
 }
 
 @keyframes flashRed {
-  0%   { background-color: #011627; }
-  50%  { background-color: #5c0000; }
-  100% { background-color: #011627; }
+    0%   { background-color: #111; }
+    40%  { background-color: #500; }
+    100% { background-color: #111; }
 }

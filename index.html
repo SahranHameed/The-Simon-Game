@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🎮 Simon Game</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <div class="container">
-      <h1 class="title">Simon Game</h1>
-      <p class="level-display">Press Any Key to Start</p>
+    <h1 id="title">Simon Game</h1>
+    <p id="status">Press Start to Play</p>
+    <button id="start-btn" onclick="main()">Start</button>
 
-      <div class="game-board">
-        <div class="btn-row">
-          <div class="simon-btn green" id="green"></div>
-          <div class="simon-btn red" id="red"></div>
-        </div>
-        <div class="center-circle">
-          <p class="level-label">LEVEL</p>
-          <p class="level-num" id="level-num">0</p>
-        </div>
-        <div class="btn-row">
-          <div class="simon-btn yellow" id="yellow"></div>
-          <div class="simon-btn blue" id="blue"></div>
-        </div>
-      </div>
+    <div class="game-wrapper">
 
-      <p class="status-msg" id="status-msg">🎮 Boss Level Challenge 02</p>
+        <!-- Top row -->
+        <div class="row">
+            <div onclick="panelClicked(event.currentTarget)" class="panel top-left-panel"></div>
+            <div onclick="panelClicked(event.currentTarget)" class="panel top-right-panel"></div>
+        </div>
+
+        <!-- Center circle -->
+        <div class="center">
+            <p class="level-label">LEVEL</p>
+            <p id="level-num">0</p>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="row">
+            <div onclick="panelClicked(event.currentTarget)" class="panel bottom-left-panel"></div>
+            <div onclick="panelClicked(event.currentTarget)" class="panel bottom-right-panel"></div>
+        </div>
+
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="script.js"></script>
-  </body>
+</body>
 </html>

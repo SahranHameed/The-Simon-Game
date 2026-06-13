@@ -1,174 +1,141 @@
-// Simon Game - Boss Level Challenge 02
+const topLeft     = document.querySelector('.top-left-panel');
+const topRight    = document.querySelector('.top-right-panel');
+const bottomLeft  = document.querySelector('.bottom-left-panel');
+const bottomRight = document.querySelector('.bottom-right-panel');
+const statusEl    = document.getElementById('status');
+const levelEl     = document.getElementById('level-num');
+const startBtn    = document.getElementById('start-btn');
 
-var gamePattern = [];
-var userClickedPattern = [];
-var started = false;
-var level = 0;
-
-var buttonColors = ["red", "blue", "green", "yellow"];
-
-// Sound frequencies for each color
-var sounds = {
-  red:    440,
-  blue:   330,
-  green:  260,
-  yellow: 392
+// ── Sound frequencies for each panel ────────────────────────
+const sounds = {
+    'top-left-panel':     260,   // Green  - low
+    'top-right-panel':    440,   // Red    - high
+    'bottom-left-panel':  330,   // Yellow - mid
+    'bottom-right-panel': 392    // Blue   - mid-high
 };
 
-// ─── Start game on any keypress ───────────────────────────────
-$(document).keypress(function () {
-  if (!started) {
-    startGame();
-  }
-});
+// ── Play beep sound ──────────────────────────────────────────
+const playSound = (panel) => {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-// Also allow tap/click on mobile to start
-$(document).on("click", function (e) {
-  if (!started && !$(e.target).hasClass("simon-btn")) {
-    startGame();
-  }
-});
+    osc.connect(gain);
+    gain.connect(ctx.destination);
 
-function startGame() {
-  started = true;
-  level = 0;
-  gamePattern = [];
-  $(".level-display").text("Level " + level);
-  $("#status-msg").text("Watch the pattern...").removeClass("game-over success");
-  nextSequence();
-}
+    const panelClass = panel.className.split(' ').find(c => sounds[c]);
+    osc.frequency.value = sounds[panelClass] || 300;
+    osc.type = 'sine';
 
-// ─── Next level sequence ──────────────────────────────────────
-function nextSequence() {
-  userClickedPattern = [];
-  level++;
-  $(".level-display").text("Level " + level);
-  $("#level-num").text(level);
-  $("#status-msg").text("Watch the pattern...").removeClass("game-over success");
+    gain.gain.setValueAtTime(0.5, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
 
-  var randomColor = buttonColors[Math.floor(Math.random() * 4)];
-  gamePattern.push(randomColor);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.6);
+};
 
-  // Play the full sequence with delay
-  var delay = 600;
-  gamePattern.forEach(function (color, index) {
-    setTimeout(function () {
-      flashButton(color);
-      playSound(color);
-    }, delay * (index + 1));
-  });
+// ── Wrong answer buzz sound ──────────────────────────────────
+const playWrongSound = () => {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-  // Enable user input after sequence
-  setTimeout(function () {
-    $("#status-msg").text("Your turn! Repeat the pattern.");
-    enableButtons();
-  }, delay * (gamePattern.length + 1));
-}
+    osc.connect(gain);
+    gain.connect(ctx.destination);
 
-// ─── Flash a button ───────────────────────────────────────────
-function flashButton(color) {
-  $("#" + color).addClass("active-" + color);
-  setTimeout(function () {
-    $("#" + color).removeClass("active-" + color);
-  }, 400);
-}
+    osc.frequency.value = 100;
+    osc.type = 'sawtooth';
 
-// ─── Play sound using Web Audio API ──────────────────────────
-function playSound(color) {
-  var context = new (window.AudioContext || window.webkitAudioContext)();
-  var oscillator = context.createOscillator();
-  var gainNode = context.createGain();
+    gain.gain.setValueAtTime(0.5, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
 
-  oscillator.connect(gainNode);
-  gainNode.connect(context.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.8);
+};
 
-  oscillator.frequency.value = sounds[color];
-  oscillator.type = "sine";
-  gainNode.gain.setValueAtTime(0.4, context.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
+// ── Pick a random panel ──────────────────────────────────────
+const getRandomPanel = () => {
+    const panels = [topLeft, topRight, bottomLeft, bottomRight];
+    return panels[Math.floor(Math.random() * panels.length)];
+};
 
-  oscillator.start(context.currentTime);
-  oscillator.stop(context.currentTime + 0.5);
-}
+let sequence        = [];
+let sequenceToGuess = [];
+let canClick        = false;
+let gameStarted     = false;
 
-// ─── Enable / Disable buttons ─────────────────────────────────
-function enableButtons() {
-  $(".simon-btn").css("pointer-events", "auto");
-}
+// ── Flash one panel + play sound ─────────────────────────────
+const flash = (panel) => {
+    return new Promise((resolve) => {
+        playSound(panel);                  // 🔊 Sound plays here
+        panel.classList.add('active');
+        setTimeout(() => {
+            panel.classList.remove('active');
+            setTimeout(resolve, 300);
+        }, 700);
+    });
+};
 
-function disableButtons() {
-  $(".simon-btn").css("pointer-events", "none");
-}
-
-// ─── User button click ────────────────────────────────────────
-$(".simon-btn").on("click", function () {
-  var userChosenColor = $(this).attr("id");
-
-  userClickedPattern.push(userChosenColor);
-  playSound(userChosenColor);
-
-  $(this).addClass("pressed");
-  var self = this;
-  setTimeout(function () {
-    $(self).removeClass("pressed");
-  }, 150);
-
-  checkAnswer(userClickedPattern.length - 1);
-});
-
-// ─── Check answer ─────────────────────────────────────────────
-function checkAnswer(currentLevel) {
-  if (userClickedPattern[currentLevel] !== gamePattern[currentLevel]) {
-    // Wrong answer
-    gameOver();
-  } else {
-    // Correct so far
-    if (userClickedPattern.length === gamePattern.length) {
-      // Completed this level
-      disableButtons();
-      $("#status-msg").text("✅ Correct! Next level loading...").addClass("success");
-      setTimeout(function () {
-        nextSequence();
-      }, 1200);
+// ── Play sequence ────────────────────────────────────────────
+const startFlashing = async () => {
+    canClick = false;
+    statusEl.textContent = 'Watch the pattern...';
+    for (const panel of sequence) {
+        await flash(panel);
     }
-  }
-}
+    canClick = true;
+    statusEl.textContent = 'Your turn! Repeat the pattern.';
+};
 
-// ─── Game Over ────────────────────────────────────────────────
-function gameOver() {
-  disableButtons();
-  started = false;
+// ── Panel click handler ──────────────────────────────────────
+const panelClicked = (clickedPanel) => {
+    if (!canClick) return;
 
-  // Flash red background
-  $("body").addClass("game-over-flash");
-  setTimeout(function () {
-    $("body").removeClass("game-over-flash");
-  }, 500);
+    playSound(clickedPanel);               // 🔊 Sound when user clicks
 
-  // Play wrong buzz sound
-  playWrongSound();
+    const expectedPanel = sequenceToGuess.shift();
 
-  $(".level-display").text("Game Over! Press Any Key to Restart");
-  $("#status-msg").text("❌ Wrong! You reached Level " + level).addClass("game-over");
-  $("#level-num").text(0);
-  level = 0;
-  gamePattern = [];
-}
+    if (expectedPanel === clickedPanel) {
+        if (sequenceToGuess.length === 0) {
+            levelEl.textContent = sequence.length + 1;
+            statusEl.textContent = '✅ Correct! Next round...';
+            canClick = false;
+            setTimeout(() => {
+                sequence.push(getRandomPanel());
+                sequenceToGuess = [...sequence];
+                startFlashing();
+            }, 800);
+        }
+    } else {
+        gameOver();
+    }
+};
 
-// ─── Wrong answer buzz sound ──────────────────────────────────
-function playWrongSound() {
-  var context = new (window.AudioContext || window.webkitAudioContext)();
-  var oscillator = context.createOscillator();
-  var gainNode = context.createGain();
+// ── Game over ────────────────────────────────────────────────
+const gameOver = () => {
+    canClick = false;
+    gameStarted = false;
 
-  oscillator.connect(gainNode);
-  gainNode.connect(context.destination);
+    playWrongSound();                      // 🔊 Wrong buzz sound
 
-  oscillator.frequency.value = 100;
-  oscillator.type = "sawtooth";
-  gainNode.gain.setValueAtTime(0.5, context.currentTime);
-  gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.8);
+    document.body.classList.add('game-over');
+    setTimeout(() => document.body.classList.remove('game-over'), 600);
 
-  oscillator.start(context.currentTime);
-  oscillator.stop(context.currentTime + 0.8);
-}
+    statusEl.textContent = '❌ Wrong! You reached Level ' + sequence.length;
+    levelEl.textContent  = '0';
+    startBtn.textContent = 'Restart';
+    startBtn.style.display = 'inline-block';
+};
+
+// ── Start / Restart ──────────────────────────────────────────
+const main = async () => {
+    if (gameStarted) return;
+    gameStarted = true;
+    startBtn.style.display = 'none';
+
+    sequence        = [getRandomPanel()];
+    sequenceToGuess = [...sequence];
+    levelEl.textContent = '1';
+
+    await startFlashing();
+};
