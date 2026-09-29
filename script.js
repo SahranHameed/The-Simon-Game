@@ -139,3 +139,4 @@ const main = async () => {
 
     await startFlashing();
 };
+
