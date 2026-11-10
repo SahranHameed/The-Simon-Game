@@ -85,13 +85,19 @@ Start → Flash Color + Sound
 
 ---
 
-## Author
+## 👨‍💻 Author
 
 **Sahran Hameed**
 - GitHub: [@SahranHameed](https://github.com/SahranHameed)
 - LinkedIn: [Sahran Hameed](https://www.linkedin.com/in/sahran-hameed/)
 - Portfolio: [sahranhameed.github.io](https://sahranhameed.github.io/My-Portfolio/)
+- HackerRank: [Sahran Hameed_it](https://www.hackerrank.com/profile/sahranhameed_it)
 
+Frontend Developer | Full Stack Learner | Networking & Cloud Security Enthusiast
+
+## ⭐ If you like this project 
+
+Give it a Star on GitHub.⭐
 ---
 
 ## License
@@ -99,6 +105,4 @@ Start → Flash Color + Sound
 This project is open source and available under the [MIT License](LICENSE).
 
 ---
-
-⭐ **If you like this project, give it a star!** ⭐
 
